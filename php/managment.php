@@ -1,54 +1,98 @@
 <?php
-/* Збереження змін у файлі користувачів */
-function saveUserList($users)
-{
-    $file = fopen('../data/userlist.csv', 'w');
-    foreach ($users as $user) {
-        fputcsv($file, $user);
-    }
-    fclose($file);
-}
 
-/* Видалення товарів користувача в разі зміни ролі з "Продавець" на "Користувач" */
-function deleteUserItems($login)
-{
-    $lines = file('../data/products.csv'); /* Зчитування усіх рядків файлу */
-    $output = array(); /* Масив для зберігання відфільтрованих рядків */
-    foreach ($lines as $line) {
-        $data = explode(',', $line); /* Розбиваємо рядок на масив */
-        if ($data[1] !== $login) { /* Перевіряємо, чи не співпадає логін */
-            $output[] = $line; /* Якщо логін не співпадає, додаємо рядок до масиву */
+class User {
+    private $login;
+    private $role;
+
+    public function __construct($login, $role) {
+        $this->login = $login;
+        $this->role = $role;
+    }
+
+    public function changeRole($newRole) {
+        $this->role = $newRole;
+    }
+
+    public function getLogin() {
+        return $this->login;
+    }
+
+    public function getRole() {
+        return $this->role;
+    }
+
+    public function deleteUserItems() {
+        $lines = file('../data/products.csv');
+        $output = array();
+        foreach ($lines as $line) {
+            $data = explode(',', $line);
+            if ($data[1] !== $this->login) {
+                $output[] = $line;
+            }
         }
-    }/* Зберігаємо вміст файлу без рядків з відповідним логіном */
-    file_put_contents('../data/products.csv', implode('', $output));
-}
-
-/* Зчитування користувачів з файлу userlist.csv */
-$users = [];
-if (($handle = fopen("../data/userlist.csv", "r")) !== FALSE) {
-    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-        $users[] = $data;
+        file_put_contents('../data/products.csv', implode('', $output));
     }
-    fclose($handle);
 }
 
-/* Обробка запиту на зміну ролі користувача */
+class UserList {
+    private $users = [];
+
+    public function loadUsersFromFile($filename) {
+        if (($handle = fopen($filename, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $this->users[] = new User($data[0], $data[1]);
+            }
+            fclose($handle);
+        }
+    }
+
+    public function saveUsersToFile($filename) {
+        $file = fopen($filename, 'w');
+        foreach ($this->users as $user) {
+            fputcsv($file, [$user->getLogin(), $user->getRole()]);
+        }
+        fclose($file);
+    }
+
+    public function getUserByLogin($login) {
+        foreach ($this->users as $user) {
+            if ($user->getLogin() === $login) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
+    public function deleteUserItems($login) {
+        $user = $this->getUserByLogin($login);
+        if ($user) {
+            $user->deleteUserItems();
+        }
+    }
+
+    public function getUsers() {
+        return $this->users;
+    }
+}
+
+// Використання класів
+$userList = new UserList();
+$userList->loadUsersFromFile("../data/userlist.csv");
+
 if (isset($_POST['change_role'])) {
     $login = $_POST['login'];
     $new_role = $_POST['new_role'];
-    /* Зміна ролі користувача в масиві $users */
-    foreach ($users as &$user) {
-        if ($user[0] === $login) {
-            $user[1] = $new_role;
-            break;
+
+    $user = $userList->getUserByLogin($login);
+    if ($user) {
+        $user->changeRole($new_role);
+        $userList->saveUsersToFile("../data/userlist.csv");
+
+        if ($new_role === 'user') {
+            $userList->deleteUserItems($login);
         }
     }
-    /* Збереження оновленого списку користувачів у файлі */
-    saveUserList($users);
-    /* Якщо нова роль користувача - "user", видаляємо його товари */
-    if ($new_role === 'user') {
-        deleteUserItems($login);
-    }
+
     header('Location: ../pages/management.php');
 }
 

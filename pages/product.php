@@ -1,8 +1,7 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Запуск сессії */
-include ('../php/csvreader.php'); /* Перетворення .csv файлу в масив */
-include ('../php/deleteproduct.php');   /* Можливість видалення товару */
+include ('../php/csv.php'); /* Робота з .csv */
 ?>
 
 <div class="main-block">
@@ -22,14 +21,15 @@ include ('../php/deleteproduct.php');   /* Можливість видаленн
     $itemName = $item[2];
     $price = $item[3];
     $imagePath = $item[4];
-    /* Власник товару та адміністрація можуть видаляти товар */
-    if (getUserRole($_SESSION['login']) === 'administrator' || $_SESSION['login'] == $owner) {
-        $allow_delete = true;
-    } else {
-        $allow_delete = false;
+    $allow_delete = false;
+    if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) { /* Перевірка авторизації */
+        /* Власник товару та адміністрація можуть видаляти товар */
+        if (getUserLevel($_SESSION['login']) == 2 || $_SESSION['login'] == $owner) {
+            $allow_delete = true;
+        }
     }
     /* Товари які виклав адміністратор закріплені за магазином */
-    if (getUserRole($owner) == "administrator") {
+    if (getUserLevel($owner) == 2) {
         $owner = "Магазин";
     }
     ?>

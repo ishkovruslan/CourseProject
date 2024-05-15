@@ -1,16 +1,12 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-/* Товари можуть створювати лише адміністратори та продавці */
-$role = getUserRole($_SESSION['login']);
-if ($role !== 'administrator' && $role !== 'seller') {
-    header("location: ../index.php");
-}
+checkAccess(1); /* Доступ у адміністраторів та продавців */
 ?>
 
 <div class="main-block">
-    <h2>Створення нового товару</h2>
-    <form id="productForm" action="../php/createproduct.php" method="post" enctype="multipart/form-data">
+    <h1>Створення нового товару</h1>
+    <form id="productForm" action="../php/create.php" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="category">Категорія:</label>
             <select name="category" id="category">
@@ -37,7 +33,7 @@ if ($role !== 'administrator' && $role !== 'seller') {
             <label for="image">Зображення товару:</label>
             <input type="file" id="image" name="image" accept="image/*" required>
         </div>
-        <button type="submit">Створити товар</button>
+        <button type="submit" name="create_product">Створити товар</button>
     </form>
 
     <script>

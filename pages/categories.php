@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-include ('../php/csvreader.php');   /* Перетворення .csv файлу в масив */
+include ('../php/csv.php');   /* Робота з .csv */
 $csvFile = '../data/categories.csv';
 $categories = readCSV($csvFile);
 ?>

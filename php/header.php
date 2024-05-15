@@ -1,7 +1,7 @@
 <?php
-require_once 'userrole.php'; /* Функція визначення ролі користувача */
-require_once ('autocss.php'); /* Функція автоматичного додавання стилів відповідно до назви сторінки */
+require_once ('../php/highaccess.php'); /* Перевірка рівня доступу */
 ?>
+
 <!DOCTYPE html>
 <html lang="ukr">
 
@@ -10,17 +10,20 @@ require_once ('autocss.php'); /* Функція автоматичного до�
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Курсова робота</title>
     <link rel="stylesheet" type="text/css" href="../styles/global/style.css">
+    <!-- Автоматичні стилі з врахування назви сторінки та ролі користувача -->
     <?php
     /* Визначення ролі користувача */
+    $current_page = basename($_SERVER['PHP_SELF'], '.php');
     if (isset($_SESSION['login'])) {
         $role = getUserRole($_SESSION['login']); /* Отримання ролі, якщо 'login' існує в сесії */
-        if (!in_array($role, ['administrator', 'seller', 'user'])) {
+        if (getUserLevel($_SESSION['login']) == -1) {
             $role = 'user'; /* За замовчуванням, якщо немає ролі */
         }
     } else {
         $role = 'user'; /* За замовчуванням, якщо сесія або ключ 'login' відсутній */
-    } /* Підключення CSS відповідно до ролі */ ?>
+    } ?>
     <link rel="stylesheet" type="text/css" href="../styles/role/<?= htmlspecialchars($role); ?>.css">
+    <link rel="stylesheet" type="text/css" href="../styles/pages/<?= htmlspecialchars($current_page); ?>.css">
 </head>
 <!-- Тіло з навігаційним меню -->
 
@@ -30,7 +33,7 @@ require_once ('autocss.php'); /* Функція автоматичного до�
     </header>
     <div class="PC">
         <img src="../images/global/PC.jpg" alt="Головне зображення">
-        <a href="../server.php"> <?php echo date("Y-m-d"); ?></a>
+        <a href="../index.php"> <?php echo date("Y-m-d"); ?></a>
     </div>
     <div class="left"><!-- Загальнодоступні кнопки навігаційної панелі -->
         <p class="line">
@@ -43,10 +46,9 @@ require_once ('autocss.php'); /* Функція автоматичного до�
         </p>
         <?php
         /* Перевірка авторизації користувача */
-        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+        if (isset($_SESSION['loggedin']) === true) {
             /* Якщо це адміністратор - надати доступ до сторінок */
-            $role = getUserRole($_SESSION['login']);
-            if ($role === 'administrator') {
+            if (getUserLevel($_SESSION['login']) == 2) {
                 ?>
                 <p class="line">
                     <img src="../images/global/SharpLine.jpg" alt="Гостра лінія">
@@ -63,7 +65,7 @@ require_once ('autocss.php'); /* Функція автоматичного до�
             <?php } ?>
             <?php
             /* Якщо користувач має роль адміністратора або продавця - надати доступ до створення товарів */
-            if ($role === 'administrator' || $role === 'seller') {
+            if (getUserLevel($_SESSION['login']) >= 1) {
                 ?>
                 <p class="line">
                     <img src="../images/global/SharpLine.jpg" alt="Гостра лінія">

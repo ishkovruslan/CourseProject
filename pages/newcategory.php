@@ -1,12 +1,12 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-require_once ('../php/highaccess.php'); /* Доступ лише у адміністраторів */
+checkAccess(1); /* Доступ лише у адміністраторів */
 ?>
 
 <div class="main-block">
-    <h2>Створити нову категорію</h2>
-    <form action="../php/createcategory.php" method="POST" enctype="multipart/form-data">
+    <h1>Створити нову категорію</h1>
+    <form action="../php/create.php" method="post" enctype="multipart/form-data">
         <label for="category_name">Назва категорії:</label><br>
         <input type="text" id="category_name" name="category_name"><br><br>
 
@@ -16,10 +16,10 @@ require_once ('../php/highaccess.php'); /* Доступ лише у адміні
         <label for="category_image">Зображення категорії:</label><br>
         <input type="file" id="category_image" name="category_image" accept="image/*" required><br><br>
         
-        <label for="specifications">Специфікації (розділені комою):</label><br>
+        <label for="specifications">Специфікації (розділені комою з пробілом):</label><br>
         <textarea id="specifications" name="specifications" rows="4" cols="50"></textarea><br><br>
 
-        <input type="submit" value="Створити категорію">
+        <button type="submit" name="create_category">Створити категорію</button>
     </form>
 </div>
 </main>

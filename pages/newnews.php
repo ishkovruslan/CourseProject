@@ -1,12 +1,12 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-require_once ('../php/highaccess.php'); /* Доступ лише у адміністраторів */
+checkAccess(2); /* Доступ лише у адміністраторів */
 ?>
 
 <div class="main-block">
     <h1>Створити нову новину</h1>
-    <form action="../php/createnews.php" method="POST" enctype="multipart/form-data">
+    <form action="../php/create.php" method="post" enctype="multipart/form-data">
         <label for="news_title">Назва новини:</label><br>
         <input type="text" id="news_title" name="news_title"><br><br>
 
@@ -22,7 +22,7 @@ require_once ('../php/highaccess.php'); /* Доступ лише у адміні
         <label for="end_date">Дата кінця:</label><br>
         <input type="date" id="end_date" name="end_date"><br><br>
 
-        <input type="submit" value="Створити новину">
+        <button type="submit" name="create_news">Створити новину</button>
     </form>
 </div>
 </main>

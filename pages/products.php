@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-include ('../php/csvreader.php'); /* Перетворення .cvs в масив */
+include ('../php/csv.php'); /* Робота з .csv */
 ?>
 
 <div class="main-block">
@@ -16,7 +16,7 @@ include ('../php/csvreader.php'); /* Перетворення .cvs в масив
             value="<?php echo isset($_GET['minPrice']) ? htmlspecialchars($_GET['minPrice']) : ''; ?>">
         <input type="text" name="maxPrice" placeholder="Макс. вартість"
             value="<?php echo isset($_GET['maxPrice']) ? htmlspecialchars($_GET['maxPrice']) : ''; ?>">
-        <select name="sort">    <!-- Сортування за ціною -->
+        <select name="sort"> <!-- Сортування за ціною -->
             <option value="asc" <?php echo isset($_GET['sort']) && $_GET['sort'] == 'asc' ? 'selected' : ''; ?>>Від
                 меншої до більшої ціни</option>
             <option value="desc" <?php echo isset($_GET['sort']) && $_GET['sort'] == 'desc' ? 'selected' : ''; ?>>Від
@@ -53,8 +53,7 @@ include ('../php/csvreader.php'); /* Перетворення .cvs в масив
             $imagePath = $item[4];
 
             /* Товари які виклав адміністратор закріплені за магазином */
-            $role = getUserRole($owner);
-            if ($role == "administrator") {
+            if (getUserLevel($owner) == 2) {
                 $owner = "Магазин";
             }
 

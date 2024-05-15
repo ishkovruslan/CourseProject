@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once ('../php/autorization.php');   /* Авторизація користувача */
-require_once ('../php/header.php'); ?>  <!-- Верхня частина сайту -->
+require_once ('../php/authentication.php');   /* Авторизація користувача */
+require_once ('../php/header.php'); ?> <!-- Верхня частина сайту -->
 <div class="main-block">
-    <h2>Форма авторизації</h2>
+    <h1>Форма авторизації</h1>
     <?php /* Якщо користувач вже авторизований - відправити на index.php */
     if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         echo "<p>Ви вже авторизовані</p>";
@@ -19,7 +19,7 @@ require_once ('../php/header.php'); ?>  <!-- Верхня частина сай�
             <input type="text" id="login" name="login"><br>
             <label for="password">Пароль:</label><br>
             <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="Увійти">
+            <input type="submit" name="login_submit" value="Зареєструватись">
         </form>
     <?php } ?>
 </div>

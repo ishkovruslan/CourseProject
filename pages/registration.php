@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once ('../php/header.php'); /* Верхня частина сайту */
-include ('../php/registration.php');/* Функції які відповідають за реєстрацію */
+include ('../php/authentication.php');/* Функції які відповідають за реєстрацію */
 ?>
 <div class="main-block">
     <h2>Форма реєстрації</h2>
@@ -19,7 +19,7 @@ include ('../php/registration.php');/* Функції які відповіда�
             <input type="text" id="login" name="login"><br>
             <label for="password">Пароль:</label><br>
             <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="Реєстрація">
+            <input type="submit" name="register_submit" value="Зареєструватись">
         </form>
     <?php } ?>
 </div>
