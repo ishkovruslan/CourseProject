@@ -1,19 +1,19 @@
 <?php
-session_start();
-require_once ('../php/header.php'); /* Верхня частина сайту */
-include ('../php/authentication.php');/* Функції які відповідають за реєстрацію */
+session_start(); /* Початок сессії */
+require_once ('header.php'); /* Верхня частина сайту */
 ?>
-<div class="main-block">
+
+<div class="main-block"><!-- Сторінка реєстрації -->
     <h2>Форма реєстрації</h2>
-    <?php
+    <?php /* Якщо користувач вже авторизований -> відправити на index.php */
     if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         header("location: ../index.php");
-    } else {
+    } else { /* В протилежному випадку запропонувати зареєструватись */
         if (isset($errorMessage)) {
             echo "<p>" . htmlspecialchars($errorMessage) . "</p>";
         }
         echo "<p>Ви ще не авторизовані</p>";
-        ?>
+        ?> <!-- Форма реєстрації -->
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <label for="login">Логін:</label><br>
             <input type="text" id="login" name="login"><br>
@@ -23,5 +23,4 @@ include ('../php/authentication.php');/* Функції які відповід�
         </form>
     <?php } ?>
 </div>
-</main>
 <?php require_once ('../php/footer.php'); ?>

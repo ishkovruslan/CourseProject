@@ -1,9 +1,9 @@
 <?php
-session_start();    /* Початок сессії */
-require_once ('../php/header.php');
+session_start(); /* Початок сессії */
+require_once ('header.php'); /* Верхня частина сайту */
 ?>
 
-<div class="main-block">
+<div class="main-block"><!-- Інформаційна сторінка, є головною сторінкою сайту -->
     <p>
         Курсова робота студента 535-а групи Ішкова Руслана Вікторовича.
     </p>
@@ -22,5 +22,4 @@ require_once ('../php/header.php');
         Користувач повинен мати можливість взаємодіяти з каталогами та фільтрами для пошуку товарів.
     </p>
 </div>
-</main>
 <?php require_once ('../php/footer.php'); ?>

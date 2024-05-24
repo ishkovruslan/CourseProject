@@ -1,19 +1,19 @@
 <?php
-session_start();
-require_once ('../php/authentication.php');   /* Авторизація користувача */
-require_once ('../php/header.php'); ?> <!-- Верхня частина сайту -->
-<div class="main-block">
+session_start(); /* Початок сессії */
+require_once ('header.php'); /* Верхня частина сайту */
+?> 
+<div class="main-block"><!-- Сторінка авторизації -->
     <h1>Форма авторизації</h1>
-    <?php /* Якщо користувач вже авторизований - відправити на index.php */
+    <?php /* Якщо користувач вже авторизований -> відправити на index.php */
     if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
         echo "<p>Ви вже авторизовані</p>";
         header("location: ../index.php");
-    } else {
+    } else { /* В протилежному випадку запропонувати авторизуватись */
         if (isset($errorMessage)) {
             echo "<p>" . htmlspecialchars($errorMessage) . "</p>";
         }
         echo "<p>Ви ще не авторизовані</p>";
-        ?>
+        ?><!-- Форма для авторизації -->
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <label for="login">Логін:</label><br>
             <input type="text" id="login" name="login"><br>
@@ -23,5 +23,4 @@ require_once ('../php/header.php'); ?> <!-- Верхня частина сайт
         </form>
     <?php } ?>
 </div>
-</main>
 <?php require_once ('../php/footer.php'); ?>

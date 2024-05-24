@@ -1,20 +1,23 @@
 <?php
-session_start();
-require_once ('../php/header.php'); /* Верхня частина сайту */
-checkAccess(1); /* Доступ у адміністраторів та продавців */
+session_start(); /* Початок сесії */
+require_once('header.php'); /* Верхня частина сайту */
+$accessControl->checkAccess(1); /* Доступ у адміністраторів та продавців */
+require_once('../php/mysql.php'); /* Підключення до бази даних */
+require_once('../php/crud.php'); /* Підключення до бази даних */
 ?>
 
-<div class="main-block">
+<div class="main-block"><!-- Сторінка створення продуктів -->
     <h1>Створення нового товару</h1>
-    <form id="productForm" action="../php/create.php" method="post" enctype="multipart/form-data">
+    <form id="productForm" action="../php/crud.php" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="category">Категорія:</label>
-            <select name="category" id="category">
+            <select name="category" id="category"> <!-- Вибір категорії -->
+                <option value="">Оберіть категорію</option>
                 <?php
-                /* Отримання унікальних характеристик відповідно до категорії */
-                $categories = array_map('str_getcsv', file('../data/categories.csv'));
-                foreach ($categories as $category) {
-                    echo '<option value="' . htmlspecialchars($category[0]) . '">' . htmlspecialchars($category[0]) . '</option>';
+                if (count($categories) > 0) {
+                    foreach ($categories as $row) {
+                        echo '<option value="' . htmlspecialchars($row["category_name"]) . '">' . htmlspecialchars($row["category_name"]) . '</option>';
+                    }
                 }
                 ?>
             </select>
@@ -30,31 +33,28 @@ checkAccess(1); /* Доступ у адміністраторів та прод�
         <div id="characteristics" class="form-group">
         </div>
         <div class="form-group">
-            <label for="image">Зображення товару:</label>
-            <input type="file" id="image" name="image" accept="image/*" required>
+            <label for="uploadPath">Зображення товару з співвідношенням 16:9:</label>
+            <input type="file" id="uploadPath" name="uploadPath" accept="image/*" required>
         </div>
         <button type="submit" name="create_product">Створити товар</button>
     </form>
-
+    <!-- Скрипт для категорій -->
     <script>
         document.getElementById("category").addEventListener("change", function () {
             var selectedCategory = this.value;
             var characteristicsDiv = document.getElementById("characteristics");
             characteristicsDiv.innerHTML = "";
-            <?php
-            $categories = array_map('str_getcsv', file('../data/categories.csv'));
-            foreach ($categories as $category) {
-                echo 'if (selectedCategory === "' . htmlspecialchars($category[0]) . '") {';
-                for ($i = 3; $i <= 25; $i++) {
-                    if (!empty($category[$i])) {
-                        echo 'characteristicsDiv.innerHTML += \'<div class="form-group"><label for="characteristic_' . $i . '">' . htmlspecialchars($category[$i]) . ':</label><input type="text" name="characteristic_' . $i . '" id="characteristic_' . $i . '"></div>\';';
-                    }
+
+            var categories = <?php echo json_encode($categories); ?>;
+            categories.forEach(function(category) {
+                if (selectedCategory === category.category_name) {
+                    var specifications = category.specifications.split(",");
+                    specifications.forEach(function(spec, index) {
+                        characteristicsDiv.innerHTML += '<div class="form-group"><label for="characteristic_' + index + '">' + spec + ':</label><input type="text" name="characteristics[' + index + ']" id="characteristic_' + index + '"></div>';
+                    });
                 }
-                echo '}';
-            }
-            ?>
+            });
         });
     </script>
 </div>
-</main>
-<?php require_once ('../php/footer.php'); ?>
+<?php require_once('../php/footer.php'); ?>

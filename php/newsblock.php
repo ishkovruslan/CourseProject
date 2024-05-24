@@ -1,17 +1,19 @@
 <?php
-/* Отримання поточної дати */
-$current_date = date("Y-m-d");
-/* Зчитуємо новини з news.csv */
-$news_data = array_map('str_getcsv', file('../data/news.csv'));
-/* Вивід нових які підпадають під необхідний діапазон */
-foreach ($news_data as $news) {
-    /* Перевірка актуальності новини */
-    if ($current_date >= $news[3] && $current_date <= $news[4]) {
-        // Виводимо блок з новиною
-        echo '<div class="news-img">';
-        echo '<img src="' . htmlspecialchars($news[1]) . '" alt="Зображення новини">';
-        echo '<p>' . htmlspecialchars($news[0]) . '</p>';
-        echo '</div>';
+require_once('mysql.php'); // Підключення до бази
+
+function displayNews($db) {
+    $result = $db->getActiveNews(date("Y-m-d"));
+    if (count($result) > 0) {
+        foreach ($result as $row) {
+            echo '<div class="news-img">';
+            echo '<img src="../images/news/' . htmlspecialchars($row['uploadPath']) . '">';
+            echo '<p>' . htmlspecialchars($row["news_title"]) . '</p>';
+            echo '</div>';
+        }
+    } else {
+        echo "Новини відсутні";
     }
 }
+
+displayNews($db);
 ?>
